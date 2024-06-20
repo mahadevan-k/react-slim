@@ -33,8 +33,8 @@ I don't plan to change the functionality of the library *at all*. I think the wo
 many libraries that change too fast, leaving developers always confused about the right way
 to build apps or features.
 
-I am, however, open to performance improvements, bug-fixes and suggestions that can
-add an exponential benefit to the functionality of the library without breaking changes
-to the interface and retaining its design principles.
+I am, however, open to performance improvements and bug-fixes
 
+# Author
 
+Mahadevan K - mahadevan.k@gmail.com
