@@ -78,9 +78,9 @@ const create_binding = (volume,component_data,slot,props,parent) => {
     return binding
 }
 
-const dispatch = (volume,action_data,state) => {
+const dispatch = (volume,action_data,state,...args) => {
     const { action, props } = action_data
-    action(state)
+    action(state,...args)
     render_deps(volume,props)
 }
 
@@ -104,6 +104,15 @@ const increment_n2 = {
     },
     props: ['n2']
 }
+
+const add_to_n1 = {
+    action: (state,value) => {
+        state.n1=state.n1+value;
+    },
+    props: ['n1']
+}
+
+
 
 
 const n2comp = {
@@ -133,4 +142,6 @@ console.log("INCREMENT N1")
 dispatch(volume, increment_n1, state)
 console.log("INCREMENT N2")
 dispatch(volume, increment_n2, state)
+console.log("ADD TO N1")
+dispatch(volume, add_to_n1, state,5)
 
