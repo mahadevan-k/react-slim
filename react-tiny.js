@@ -1,6 +1,6 @@
-const create_volume = () => ({ bindings: {}, states: {}, deps: {}, slots: {}})
+export const create_volume = () => ({ bindings: {}, states: {}, deps: {}, slots: {}})
 
-const create_state = (volume,obj) => {
+export const create_state = (volume,obj) => {
     const uuid = crypto.randomUUID()
     volume.states[uuid] = {...obj,uuid}
     return volume.states[uuid]
@@ -8,11 +8,11 @@ const create_state = (volume,obj) => {
 
 const get_binding = (volume,uuid) => volume.bindings[uuid]
 
-const render_binding = (volume,binding) => binding.renderer(volume,binding)
+export const render_binding = (volume,binding) => binding.render(volume,binding)
 
 const get_state = (volume,uuid) => volume.states[uuid]
 
-const create_volume_binding = (volume,slot,state,props,parent,renderer) => {
+const create_volume_binding = (volume,slot,state,props,parent,render) => {
     let uuid = crypto.randomUUID();
     let slots = {}
     if(parent) {
@@ -23,7 +23,7 @@ const create_volume_binding = (volume,slot,state,props,parent,renderer) => {
             parent.slots[slot]=uuid
         }
     }
-    volume.bindings[uuid] = {state,props,parent,renderer,uuid,slots}
+    volume.bindings[uuid] = {state,props,parent,render,uuid,slots}
     return volume.bindings[uuid]
 }
 
@@ -68,80 +68,20 @@ const render_deps = (volume,props) => {
     })
 }
 
-const create_binding = (volume,component_data,slot,props,parent) => {
-    const { renderer, props: dep_props } = component_data
+export const create_binding = (volume,component_data,slot,props,parent) => {
+    const { render, props: dep_props } = component_data
 
-    const binding = create_volume_binding(volume,slot,component_data.state,props,parent,renderer)
+    const binding = create_volume_binding(volume,slot,component_data.state,props,parent,render)
 
     resolve_deps(volume,dep_props,binding)
 
     return binding
 }
 
-const dispatch = (volume,action_data,state,...args) => {
+export const dispatch = (volume,action_data,state,...args) => {
     const { action, props } = action_data
     action(state,...args)
     render_deps(volume,props)
 }
 
-volume = create_volume()
-
-state = create_state(volume, {
-    n1: 1,
-    n2: 2
-})
-
-const increment_n1 = {
-    action: (state) => {
-        state.n1=state.n1+1;
-    },
-    props: ['n1']
-}
-
-const increment_n2 = {
-    action: (state) => {
-        state.n2=state.n2+1;
-    },
-    props: ['n2']
-}
-
-const add_to_n1 = {
-    action: (state,value) => {
-        state.n1=state.n1+value;
-    },
-    props: ['n1']
-}
-
-
-
-
-const n2comp = {
-    renderer: (volume,binding) => {
-        console.log("n2 is "+binding.state.n2)
-    },
-    state,
-    props: ['n2']
-}
-
-const n1compb = create_binding(volume,{
-    renderer: (volume,binding) => {
-        const n2compb = create_binding(volume,n2comp,'n2comp',{},binding)
-        render_binding(volume,n2compb)
-
-        console.log("n1 is "+binding.state.n1);
-    },
-    state,
-    props: ['n1']
-},'n1comp1',{},undefined);
-
-console.log("INCREMENT N1")
-dispatch(volume, increment_n1, state)
-console.log("INCREMENT N1")
-dispatch(volume, increment_n1, state)
-console.log("INCREMENT N1")
-dispatch(volume, increment_n1, state)
-console.log("INCREMENT N2")
-dispatch(volume, increment_n2, state)
-console.log("ADD TO N1")
-dispatch(volume, add_to_n1, state,5)
 

@@ -1,0 +1,12 @@
+{
+  "name": "react-tiny",
+  "version": "1.0.0",
+  "description": "An attempt to make a minimal react/redux library",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mahadevan K",
+  "license": "MIT"
+}
