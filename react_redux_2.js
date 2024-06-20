@@ -12,7 +12,7 @@ const render_binding = (volume,binding) => binding.renderer(volume,binding)
 
 const get_state = (volume,uuid) => volume.states[uuid]
 
-const create_binding = (volume,slot,state,props,parent,renderer) => {
+const create_volume_binding = (volume,slot,state,props,parent,renderer) => {
     let uuid = crypto.randomUUID();
     let slots = {}
     if(parent) {
@@ -68,10 +68,10 @@ const render_deps = (volume,props) => {
     })
 }
 
-const create_component = (volume,component_data,slot,props,parent) => {
+const create_binding = (volume,component_data,slot,props,parent) => {
     const { renderer, props: dep_props } = component_data
 
-    const binding = create_binding(volume,slot,component_data.state,props,parent,renderer)
+    const binding = create_volume_binding(volume,slot,component_data.state,props,parent,renderer)
 
     resolve_deps(volume,dep_props,binding)
 
@@ -114,12 +114,12 @@ const n2comp = {
     props: ['n2']
 }
 
-const n1compb = create_component(volume,{
+const n1compb = create_binding(volume,{
     renderer: (volume,binding) => {
-        const n2compb = create_component(volume,n2comp,'n2comp',{},binding)
+        const n2compb = create_binding(volume,n2comp,'n2comp',{},binding)
         render_binding(volume,n2compb)
 
-        console.log("n1 is ",binding.state.n1);
+        console.log("n1 is "+binding.state.n1);
     },
     state,
     props: ['n1']
