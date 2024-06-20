@@ -13,7 +13,6 @@ const render_binding = (volume,binding) => binding.renderer(volume,binding)
 const get_state = (volume,uuid) => volume.states[uuid]
 
 const create_binding = (volume,slot,state,props,parent,renderer) => {
-    console.log("Parent slots: ", parent && parent.slots);
     let uuid = crypto.randomUUID();
     let slots = {}
     if(parent) {
@@ -69,10 +68,10 @@ const render_deps = (volume,props) => {
     })
 }
 
-const create_component = (volume,component_data,slot,state,props,parent) => {
+const create_component = (volume,component_data,slot,props,parent) => {
     const { renderer, props: dep_props } = component_data
 
-    const binding = create_binding(volume,slot,state,props,parent,renderer)
+    const binding = create_binding(volume,slot,component_data.state,props,parent,renderer)
 
     resolve_deps(volume,dep_props,binding)
 
@@ -111,18 +110,20 @@ const n2comp = {
     renderer: (volume,binding) => {
         console.log("n2 is "+binding.state.n2)
     },
+    state,
     props: ['n2']
 }
 
 const n1compb = create_component(volume,{
     renderer: (volume,binding) => {
-        const n2compb = create_component(volume,n2comp,'n2comp',binding.state,{},binding)
+        const n2compb = create_component(volume,n2comp,'n2comp',{},binding)
         render_binding(volume,n2compb)
 
         console.log("n1 is ",binding.state.n1);
     },
+    state,
     props: ['n1']
-},'n1comp1',state,{},undefined);
+},'n1comp1',{},undefined);
 
 console.log("INCREMENT N1")
 dispatch(volume, increment_n1, state)
@@ -132,5 +133,4 @@ console.log("INCREMENT N1")
 dispatch(volume, increment_n1, state)
 console.log("INCREMENT N2")
 dispatch(volume, increment_n2, state)
-console.log(volume)
 
