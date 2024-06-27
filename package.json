@@ -8,5 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mahadevan K",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "jsdom": "^24.1.0",
+    "mustache": "^4.2.0"
+  }
 }

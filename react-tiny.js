@@ -1,18 +1,34 @@
-export const create_volume = () => ({ bindings: {}, states: {}, deps: {}, slots: {}})
+import Mustache from 'mustache';
 
-export const create_state = (volume,obj) => {
+export const create_app = (window) => ({window, volumes: []})
+
+export const get_app_element = (app,volume,binding) => 
+    app.window.document.querySelector(`[volume_uuid="${volume.uuid}"][binding_uuid="${binding.uuid}"]`);
+
+export const create_volume = (app) => {
     const uuid = crypto.randomUUID()
+    app.volumes[uuid] = { uuid, bindings: {}, states: {}, deps: {}, slots: {} }
+    return app.volumes[uuid];
+}
+
+const get_volume = (app,uuid) => app.volumes[uuid]
+
+export const create_state = (volume,obj) => { const uuid = crypto.randomUUID()
     volume.states[uuid] = {...obj,uuid}
     return volume.states[uuid]
 }
 
+
 const get_binding = (volume,uuid) => volume.bindings[uuid]
 
-export const render_binding = (volume,binding) => binding.render(volume,binding)
+export const render_binding = (app,volume,binding) => {
+   const element = get_app_element(app,volume,binding)
+   element._render(volume,binding)
+}
 
 const get_state = (volume,uuid) => volume.states[uuid]
 
-const create_volume_binding = (volume,slot,state,props,parent,render) => {
+const create_volume_binding = (volume,slot,state,props,parent,element,data) => {
     let uuid = crypto.randomUUID();
     let slots = {}
     if(parent) {
@@ -23,7 +39,7 @@ const create_volume_binding = (volume,slot,state,props,parent,render) => {
             parent.slots[slot]=uuid
         }
     }
-    volume.bindings[uuid] = {state,props,parent,render,uuid,slots}
+    volume.bindings[uuid] = {state,props,parent,element,data,uuid,slots}
     return volume.bindings[uuid]
 }
 
@@ -57,31 +73,57 @@ const resolve_deps = (volume,props,binding) => {
 }
 
 
-const render_deps = (volume,props) => {
+const render_deps = (app,volume,props) => {
     props.forEach((prop) => {
         if(prop in volume.deps) {
             volume.deps[prop].forEach((binding_uuid) => {
                 const binding = volume.bindings[binding_uuid]
-                render_binding(volume,binding)
+                render_binding(app,volume,binding)
             })
         }
     })
 }
 
 export const create_binding = (volume,component_data,slot,props,parent) => {
-    const { render, props: dep_props } = component_data
+    const { element, data, state, props: dep_props } = component_data
 
-    const binding = create_volume_binding(volume,slot,component_data.state,props,parent,render)
+    const binding = create_volume_binding(volume,slot,state,props,parent,element,data)
 
     resolve_deps(volume,dep_props,binding)
 
     return binding
 }
 
-export const dispatch = (volume,action_data,state,...args) => {
+export const dispatch = (app,volume,action_data,state,...args) => {
     const { action, props } = action_data
     action(state,...args)
-    render_deps(volume,props)
+    render_deps(app,volume,props)
 }
 
+export const create_element = (app, tag_name, template) => {
+  class DynamicComponent extends app.window.HTMLElement {
+    constructor() {
+      super();
 
+    }
+
+    connectedCallback() {
+      const volume = get_volume(app, this.getAttribute('volume_uuid'))
+      const binding = get_binding(volume, this.getAttribute('binding_uuid'))
+
+      this._render(volume,binding)
+    }
+
+    _render(volume,binding) {
+      try {
+        const rendered = Mustache.render(template, binding.data(volume,binding));
+        this.innerHTML = rendered
+      } catch (e) {
+        console.error('Error rendering component:', e);
+        this.innerHTML = '<p>Error rendering component</p>';
+      }
+    }
+  }
+
+  app.window.customElements.define(tag_name, DynamicComponent);
+}

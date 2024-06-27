@@ -1,18 +1,36 @@
-/* react-tiny example code */
+/* react-tiny example app - tutorial */
 
-/*
- * five functions is all we need \m/
+/* the following 6 methods is all we need */
+import { create_app, create_volume, create_element, create_state, create_binding, dispatch } from './react-tiny.js'
+import { JSDOM } from 'jsdom';
+
+/* ONLY FOR DEMO: setup JSDOM with dom for testing without browser (not required in a real app) */
+const dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>');
+const { window } = dom
+
+/* 
+ * First, we create an app
+ *
+ * An app is the top-level object in the react-tiny system, all functionality works within the context of an app
+ *
+ * You can have as many apps as you want in your project to keep your code modular
  */
-import { create_volume, create_state, create_binding, render_binding, dispatch } from './react-tiny.js'
+const app = create_app(window)
 
 /*
- * First, create a volume, a volume is like a module, it holds a set of components, states and other info
+ * Then, we crate a volume.
+ *
+ * A volume connects components to states and handles re-rendering components on state changes
+ *
+ * You can create as many volumes as you want, but remember that state-changes and re-rendering only work
+ * within a volume and not across volumes
  */
-const volume = create_volume()
+const volume = create_volume(app)
 
 /*
- * Add a state to our volume, a simple state that contains two numbers,
- * should always be an javascript object
+ * Add a state to our volume, which should always be a javascript object
+ *
+ * Here we create a simple state that contains two numbers,
  */ 
 const state = create_state(volume, {
     n1: 1,
@@ -66,12 +84,16 @@ const add_to_n1 = {
 /*
  * Time to build components and bindings
  *
- * A component is a simple object containing three keys
+ * A component is a simple object containing four keys
  *
- * render - the function that renders the component
+ * element - a html custom element created with the create_component function(explained below)
+ * data - function that returns all data required for rendering the component template
  * state - the state associated with the component
  * props - the keys in the state that the component uses, i.e. the keys that
  * should trigger a re-render of the component
+ *
+ * The create_element function, takes an app, a tag name for the element, 
+ * and a mustache template containing a html template which renders the component
  *
  * The props argument determines which property updates trigger a re-render.
  * This is again manual but avoids unexpected results from automation
@@ -86,9 +108,8 @@ const add_to_n1 = {
  * Here is our first component(not binding)
  */
 const n2comp = {
-    render: (volume,binding) => {
-        console.log("n2 is "+binding.state.n2)
-    },
+    element: create_element(app,'n2-comp','<h2>N2 is {{n2}}</h2>'),
+    data: (volume,binding) => ({ n2: binding.state.n2 }),
     state,
     props: ['n2']
 }
@@ -96,7 +117,7 @@ const n2comp = {
 /*
  * And our second component, which is turned into a binding on-the-fly
  *
- * One thing to note about this component is that it creates a sub-component within its render function.
+ * One thing to note about this component is that it creates a sub-component.
  * When we do this, its important to give a unique slot name to the sub-component, so that we don't create duplicate
  * sub-components on re-renders. The slot name only needs to be unique among the sub-components in the render function,
  * so don't worry about the slot name being globally unique.
@@ -104,44 +125,60 @@ const n2comp = {
  * To bind our component, we provide
  *
  * 1. The volume to add the component to
- * 2. The component itself (an object with render,state and prop keys)
- * 3. the slot name we spoke about, only important for the sub-component
- * 4. component props - not to be confused with state props, just a set of arguments for the component to 
+ * 2. The component 
+ * 3. The data function that resolves the data to be passed to the component template
+ * 4. the slot name we spoke about, only important for the sub-component
+ * 5. component props - not to be confused with state props, just a set of arguments for the component to 
  * render, not connected to the state and does not trigger re-renders
- * 5. the parent binding, which is always the binding associated with our component, sent as a
- * parameter to the render function
+ * 6. the parent binding, which is always the binding associated with our component, sent as a
+ * parameter to the data function
+ *
+ * Note that the data function can return functions as well which can be used to attach event handlers etc.
+ *
+ * Also note that when using a component tag, you need to pass the volume_uuid and binding_uuid as props to the tag,
+ * this can be obtained in the data function by creating the binding and then using it's uuid as shown below
  */
 
-create_binding(volume,{
-    render: (volume,binding) => {
+const n1compb = create_binding(volume,{
+    element: create_element(app,'n1-comp',
+        '<n2-comp volume_uuid="{{n2comp.volume_uuid}}" binding_uuid="{{n2comp.binding_uuid}}"></n2-comp><h1>N1 is {{n1}}</h1>'),
+    data: (volume,binding) => {
         const n2compb = create_binding(volume,n2comp,'n2comp',{},binding)
-        render_binding(volume,n2compb)
-
-        console.log("n1 is "+binding.state.n1);
+        return { n2comp: {volume_uuid: volume.uuid, binding_uuid: n2compb.uuid}, n1: binding.state.n1 }
     },
     state,
     props: ['n1']
 },'n1comp1',{},undefined);
 
+
+/* 
+ * Attach the top level component to our web page, simply by adding the component tag with volume and binding uuids
+ */
+window.document.body.innerHTML=`<n1-comp volume_uuid="${volume.uuid}" binding_uuid="${n1compb.uuid}"/>`
+console.log(dom.serialize())
+
 /*
  * ...and that's it, we're all setup and ready to go
  *
- * To test our components, we'll dispatch some actions below
+ * To test our components, we'll dispatch some actions below and display the changes to the dom tree
  *
  * Note that the library will appropriately update only components which are dependent on the props
  * modified by the actions
  */
 
 console.log("INCREMENT N1")
-dispatch(volume, increment_n1, state)
+dispatch(app, volume, increment_n1, state)
+console.log(dom.serialize())
 console.log("INCREMENT N1")
-dispatch(volume, increment_n1, state)
+dispatch(app, volume, increment_n1, state)
 console.log("INCREMENT N1")
-dispatch(volume, increment_n1, state)
+dispatch(app, volume, increment_n1, state)
 console.log("INCREMENT N2")
-dispatch(volume, increment_n2, state)
+dispatch(app, volume, increment_n2, state)
+console.log(dom.serialize())
 console.log("ADD TO N1")
-dispatch(volume, add_to_n1, state,5)
+dispatch(app, volume, add_to_n1, state,5)
+console.log(volume)
 
 /*
  * The end, my friend
