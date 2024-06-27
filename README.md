@@ -15,10 +15,10 @@ I like to think of it as the unshitification of react :)
 
 # What you don't get with this library
 
-Magic - no hidden functionality, no side-effects => no surprises or unpredictable behavior
-Bells and whistles - only one way to work with the library => no confusions
-extensible - provides enough de-coupled parts to let you combine things the way you want to
-developer "protection" - no parameter checking or safety checks => fast, tiny codebase
+- Magic - no hidden functionality, no side-effects => no surprises or unpredictable behavior
+- Bells and whistles - only one way to work with the library => no confusions
+- extensible - provides enough de-coupled parts to let you combine things the way you want to
+- developer "protection" - no parameter checking or safety checks => fast, tiny codebase
 
 # Learning react-tiny
 
