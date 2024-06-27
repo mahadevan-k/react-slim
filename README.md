@@ -1,6 +1,6 @@
 # React-tiny
 
-Super small react-redux implementation (~87 lines)
+Super small react-redux implementation (~127 lines)
 
 I like to think of it as the unshitification of react :)
 
