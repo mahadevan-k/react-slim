@@ -1,13 +1,13 @@
 const path = require('path');
 
 module.exports = {
-  entry: './react-tiny.js',
+  entry: './react-slim.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'react-tiny.js',
+    filename: 'react-slim.js',
     globalObject: 'this',
     library: {
-      name: 'react_tiny',
+      name: 'react_slim',
       type: 'umd',
     },
   },

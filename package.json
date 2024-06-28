@@ -1,14 +1,14 @@
 {
-  "name": "react-tiny",
+  "name": "react-slim",
   "version": "1.0.0",
   "description": "An attempt to make a minimal react/redux library",
-  "main": "react-tiny.js",
+  "main": "react-slim.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
   },
-  "module": "react-tiny.js",
+  "module": "react-slim.js",
   "author": "Mahadevan K",
   "license": "MIT",
   "dependencies": {
