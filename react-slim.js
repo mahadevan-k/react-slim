@@ -6,19 +6,13 @@ export const create_app = (window) => ({window, volumes: []})
 export const get_app_element = (app,volume,binding) => 
     app.window.document.querySelector(`[volume_uuid="${volume.uuid}"][binding_uuid="${binding.uuid}"]`);
 
-export const create_volume = (app) => {
+export const create_volume = (app,state) => {
     const uuid = uuidv4()
-    app.volumes[uuid] = { uuid, bindings: {}, states: {}, deps: {} }
+    app.volumes[uuid] = { uuid, bindings: {}, state: state, deps: {} }
     return app.volumes[uuid];
 }
 
 const get_volume = (app,uuid) => app.volumes[uuid]
-
-export const create_state = (volume,obj) => { const uuid = uuidv4()
-    volume.states[uuid] = {...obj,uuid}
-    return volume.states[uuid]
-}
-
 
 const get_binding = (volume,uuid) => volume.bindings[uuid]
 
@@ -27,9 +21,7 @@ export const render_binding = (app,volume,binding) => {
    element._render(volume,binding)
 }
 
-const get_state = (volume,uuid) => volume.states[uuid]
-
-const create_volume_binding = (volume,slot,state,props,parent,element,data) => {
+const create_volume_binding = (volume,slot,props,parent,element,data) => {
     let uuid = uuidv4();
     let slots = {}
     if(parent) {
@@ -40,7 +32,7 @@ const create_volume_binding = (volume,slot,state,props,parent,element,data) => {
             parent.slots[slot]=uuid
         }
     }
-    volume.bindings[uuid] = {state,props,parent,element,data,uuid,slots}
+    volume.bindings[uuid] = {state: volume.state,props,parent,element,data,uuid,slots}
     return volume.bindings[uuid]
 }
 
@@ -86,18 +78,18 @@ const render_deps = (app,volume,props) => {
 }
 
 export const create_binding = (volume,component_data,slot,props,parent) => {
-    const { element, data, state, props: dep_props } = component_data
+    const { element, data, props: dep_props } = component_data
 
-    const binding = create_volume_binding(volume,slot,state,props,parent,element,data)
+    const binding = create_volume_binding(volume,slot,props,parent,element,data)
 
     resolve_deps(volume,dep_props,binding)
 
     return binding
 }
 
-export const dispatch = (app,volume,action_data,state,...args) => {
+export const dispatch = (app,volume,action_data,...args) => {
     const { action, props } = action_data
-    action(state,...args)
+    action(volume.state,...args)
     render_deps(app,volume,props)
 }
 

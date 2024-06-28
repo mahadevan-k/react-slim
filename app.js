@@ -1,7 +1,7 @@
 /* react-tiny example app - tutorial */
 
 /* the following 6 methods is all we need */
-import { create_app, create_volume, create_element, create_state, create_binding, dispatch } from './react-slim.js'
+import { create_app, create_volume, create_element, create_binding, dispatch } from './react-slim.js'
 import { JSDOM } from 'jsdom';
 
 /* ONLY FOR DEMO: setup JSDOM with dom for testing without browser (not required in a real app) */
@@ -20,26 +20,26 @@ const { window } = dom
 const app = create_app(window)
 
 /*
+ * Then we create a state, which should always be an object
+ *
+ * Here we create a simple state that contains two numbers,
+ */ 
+const state = {
+    n1: 1,
+    n2: 2
+}
+
+/*
  * Then, we crate a volume.
  *
- * A volume connects components to states and handles re-rendering components on state changes
+ * A volume connects components to a state and handles re-rendering components on state changes
  *
  * You can create as many volumes as you want, but remember that state-changes and re-rendering only work
  * within a volume and not across volumes
  *
  * A paginated todo-list with all its CRUD operations is a good example I can think of, for a single volume 
  */
-const volume = create_volume(app)
-
-/*
- * Add a state to our volume, which should always be a javascript object
- *
- * Here we create a simple state that contains two numbers,
- */ 
-const state = create_state(volume, {
-    n1: 1,
-    n2: 2
-})
+const volume = create_volume(app,state)
 
 /*
  * Now lets define some actions - an action modifies state, and as a result, updates components
@@ -116,7 +116,6 @@ const add_to_n1 = {
 const n2comp = {
     element: create_element(app,'n2-comp','<h2>N2 is {{n2}}</h2>'),
     data: (volume,binding) => ({ n2: binding.state.n2 }),
-    state,
     props: ['n2']
 }
 
@@ -154,7 +153,6 @@ const n1compb = create_binding(volume,{
         const n2compb = create_binding(volume,n2comp,'n2comp',{},binding)
         return { n2comp: {volume_uuid: volume.uuid, binding_uuid: n2compb.uuid}, n1: binding.state.n1 }
     },
-    state,
     props: ['n1']
 },'n1comp1',{},undefined);
 
@@ -175,17 +173,17 @@ console.log(dom.serialize())
  */
 
 console.log("INCREMENT N1")
-dispatch(app, volume, increment_n1, state)
+dispatch(app, volume, increment_n1)
 console.log(dom.serialize())
 console.log("INCREMENT N1")
-dispatch(app, volume, increment_n1, state)
+dispatch(app, volume, increment_n1)
 console.log("INCREMENT N1")
-dispatch(app, volume, increment_n1, state)
+dispatch(app, volume, increment_n1)
 console.log("INCREMENT N2")
-dispatch(app, volume, increment_n2, state)
+dispatch(app, volume, increment_n2)
 console.log(dom.serialize())
 console.log("ADD TO N1")
-dispatch(app, volume, add_to_n1, state,5)
+dispatch(app, volume, add_to_n1,5)
 console.log(volume)
 
 /*
