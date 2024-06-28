@@ -14,6 +14,8 @@ const { window } = dom
  * An app is the top-level object in the react-tiny system, all functionality works within the context of an app
  *
  * You can have as many apps as you want in your project to keep your code modular
+ *
+ * I plan to use the app object to break huge applications up into sets of single-page applications
  */
 const app = create_app(window)
 
@@ -24,6 +26,8 @@ const app = create_app(window)
  *
  * You can create as many volumes as you want, but remember that state-changes and re-rendering only work
  * within a volume and not across volumes
+ *
+ * A paginated todo-list with all its CRUD operations is a good example I can think of, for a single volume 
  */
 const volume = create_volume(app)
 
@@ -40,8 +44,10 @@ const state = create_state(volume, {
 /*
  * Now lets define some actions - an action modifies state, and as a result, updates components
  *
- * Each action consists of an action key that holds the function that executes the action, 
- * and a props key that holds the keys of the state that are modified by the action
+ * Each action is a simple object that consists of 
+ *
+ *   - an action key that holds the function that executes the action, 
+ *   - a props key that holds the keys of the state that are modified by the action
  * 
  * The props you declare are the ones that will trigger associated components to render, 
  * its manual and its upto you define it correctly, but this also means there is no magic and 
@@ -86,7 +92,7 @@ const add_to_n1 = {
  *
  * A component is a simple object containing four keys
  *
- * element - a html custom element created with the create_component function(explained below)
+ * element - a html custom element created with the create_element function(explained below)
  * data - function that returns all data required for rendering the component template
  * state - the state associated with the component
  * props - the keys in the state that the component uses, i.e. the keys that
@@ -117,10 +123,10 @@ const n2comp = {
 /*
  * And our second component, which is turned into a binding on-the-fly
  *
- * One thing to note about this component is that it creates a sub-component.
- * When we do this, its important to give a unique slot name to the sub-component, so that we don't create duplicate
- * sub-components on re-renders. The slot name only needs to be unique among the sub-components in the render function,
- * so don't worry about the slot name being globally unique.
+ * One thing to note about this component is that it creates a sub-component. When we do this, its important to give
+ * a unique slot name to the sub-component, so that we don't create duplicate sub-components on re-renders. The slot 
+ * name only needs to be unique among the sub-components in the render function, so don't worry about the slot name 
+ * being globally unique.
  *
  * To bind our component, we provide
  *
@@ -137,6 +143,8 @@ const n2comp = {
  *
  * Also note that when using a component tag, you need to pass the volume_uuid and binding_uuid as props to the tag,
  * this can be obtained in the data function by creating the binding and then using it's uuid as shown below
+ *
+ * When reading this code, compare it to the simple component above to understand what is going on
  */
 
 const n1compb = create_binding(volume,{

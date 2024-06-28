@@ -4,6 +4,10 @@ Super small react-redux implementation (~127 lines)
 
 I like to think of it as the unshitification of react :)
 
+The main motivation to write this library was the shock and horror I felt when I noticed that
+the react library actually has a compiler and rust code that compiles to WASM etc. making me
+wonder why such a complex implementation was needed for such a simple design pattern.
+
 # What you get with this library
 
 - Simple, understandable code that provides all of the core advantages of using the react design pattern
@@ -12,12 +16,12 @@ I like to think of it as the unshitification of react :)
 - Component heirarchies that update efficiently without duplication and unnecessary re-renders
 - State need not be immutable
 - Modular structure that allows you to break up your app into multiple sub-apps
+- De-coupled implementation that allows you to combine things the way you want to
 
 # What you don't get with this library
 
 - Magic - no hidden functionality, no side-effects => no surprises or unpredictable behavior
 - Bells and whistles - only one way to work with the library => no confusions
-- extensible - provides enough de-coupled parts to let you combine things the way you want to
 - developer "protection" - no parameter checking or safety checks => fast, tiny codebase
 
 # Learning react-tiny
