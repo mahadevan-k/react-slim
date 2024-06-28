@@ -2,15 +2,24 @@
   "name": "react-tiny",
   "version": "1.0.0",
   "description": "An attempt to make a minimal react/redux library",
-  "main": "app.js",
+  "main": "react-tiny.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
+  "module": "react-tiny.js",
   "author": "Mahadevan K",
   "license": "MIT",
   "dependencies": {
-    "jsdom": "^24.1.0",
     "mustache": "^4.2.0"
+  },
+  "devDependencies": {
+    "browserify": "^17.0.0",
+    "esmify": "^2.1.1",
+    "jsdom": "^24.1.0",
+    "lodash": "^4.17.21",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4"
   }
 }
