@@ -1,7 +1,7 @@
 /* react-tiny example app - tutorial */
 
 /* the following 6 methods is all we need */
-import { create_app, create_volume, create_element, create_state, create_binding, dispatch } from './react-tiny.js'
+import { create_app, create_volume, create_element, create_state, create_binding, dispatch } from './react-slim.js'
 import { JSDOM } from 'jsdom';
 
 /* ONLY FOR DEMO: setup JSDOM with dom for testing without browser (not required in a real app) */

@@ -1,4 +1,5 @@
 import Mustache from 'mustache';
+import { v4 as uuidv4 } from 'uuid';
 
 export const create_app = (window) => ({window, volumes: []})
 
@@ -6,14 +7,14 @@ export const get_app_element = (app,volume,binding) =>
     app.window.document.querySelector(`[volume_uuid="${volume.uuid}"][binding_uuid="${binding.uuid}"]`);
 
 export const create_volume = (app) => {
-    const uuid = crypto.randomUUID()
-    app.volumes[uuid] = { uuid, bindings: {}, states: {}, deps: {}, slots: {} }
+    const uuid = uuidv4()
+    app.volumes[uuid] = { uuid, bindings: {}, states: {}, deps: {} }
     return app.volumes[uuid];
 }
 
 const get_volume = (app,uuid) => app.volumes[uuid]
 
-export const create_state = (volume,obj) => { const uuid = crypto.randomUUID()
+export const create_state = (volume,obj) => { const uuid = uuidv4()
     volume.states[uuid] = {...obj,uuid}
     return volume.states[uuid]
 }
@@ -29,7 +30,7 @@ export const render_binding = (app,volume,binding) => {
 const get_state = (volume,uuid) => volume.states[uuid]
 
 const create_volume_binding = (volume,slot,state,props,parent,element,data) => {
-    let uuid = crypto.randomUUID();
+    let uuid = uuidv4();
     let slots = {}
     if(parent) {
         if(slot in parent.slots) {
