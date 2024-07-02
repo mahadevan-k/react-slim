@@ -115,7 +115,7 @@ const add_to_n1 = {
  */
 const n2comp = {
     element: create_element(app,'n2-comp','<h2>N2 is {{n2}}</h2>'),
-    data: (volume,binding) => ({ n2: binding.state.n2 }),
+    data: (volume,binding) => ({ n2: volume.state.n2 }),
     props: ['n2']
 }
 
@@ -151,7 +151,7 @@ const n1compb = create_binding(volume,{
         '<n2-comp volume_uuid="{{n2comp.volume_uuid}}" binding_uuid="{{n2comp.binding_uuid}}"></n2-comp><h1>N1 is {{n1}}</h1>'),
     data: (volume,binding) => {
         const n2compb = create_binding(volume,n2comp,'n2comp',{},binding)
-        return { n2comp: {volume_uuid: volume.uuid, binding_uuid: n2compb.uuid}, n1: binding.state.n1 }
+        return { n2comp: {volume_uuid: volume.uuid, binding_uuid: n2compb.uuid}, n1: volume.state.n1 }
     },
     props: ['n1']
 },'n1comp1',{},undefined);
