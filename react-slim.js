@@ -87,9 +87,9 @@ export const create_binding = (volume,component_data,slot,props,parent) => {
     return binding
 }
 
-export const dispatch = (app,volume,action_data,...args) => {
+export const dispatch = async (app,volume,action_data,...args) => {
     const { action,props } = action_data
-    action(volume.state,...args)
+    await action(volume.state,...args)
     render_deps(app,volume,props)
 }
 

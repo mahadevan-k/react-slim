@@ -58,7 +58,7 @@ const volume = create_volume(app,state)
  * Here's our first action to increment n1 from our state
  */
 const increment_n1 = {
-    action: (state) => {
+    action: async (state) => {
         state.n1=state.n1+1;
     },
     props: ['n1']
@@ -68,7 +68,7 @@ const increment_n1 = {
  * Here's another to increment n2
  */
 const increment_n2 = {
-    action: (state) => {
+    action: async (state) => {
         state.n2=state.n2+1;
     },
     props: ['n2']
@@ -80,7 +80,7 @@ const increment_n2 = {
  * I added this demonstrate use of additional arguments in actions
  */
 const add_to_n1 = {
-    action: (state,value) => {
+    action: async (state,value) => {
         state.n1=state.n1+value;
     },
     props: ['n1']
