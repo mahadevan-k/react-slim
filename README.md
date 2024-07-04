@@ -16,7 +16,8 @@ wonder why such a complex implementation was needed for such a simple design pat
 - Component heirarchies that update efficiently without duplication and unnecessary re-renders
 - State need not be immutable
 - Modular structure that allows you to break up your app into multiple sub-apps
-- De-coupled implementation that allows you to combine things the way you want to
+- Flexible, de-coupled implementation that allows you to combine things the way you want to
+- Great performance
 
 # What you don't get with this library
 
@@ -34,6 +35,21 @@ An example usage of react-slim to create a simple app that demonstrates how to u
 is included in the repository, you can see it here
 
 ![Example application](app.js "Example Application")
+
+# Opinionated/polarizing design choices
+
+Here are some polarizing design choices I've made in the library. These are points you should
+seriously consider before adopting react-slim for large applications.
+
+ChatGPT pointed out to me that state propagation across volumes is a disadvantage and suggested
+centralized state management as an option. I decided to go against its suggestion because multiple volume
+state changes can easily be triggered by two or more actions on two or more different volumes.
+React-slim makes a trade-off on centralized state management and shoots for modular state because
+centralized state management involves complexities in desiging the state for large applications.
+
+ChatGPT also pointed out that I don't use a virtual DOM for efficient updates to the UI, but on
+researching this topic, again, I found it unnecessary since react-slim only updates components whose state
+has changed, unlike React which re-renders the entire DOM tree on every state update.
 
 # How this library will evolve
 

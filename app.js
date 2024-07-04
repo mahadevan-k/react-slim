@@ -1,6 +1,6 @@
 /* react-slim example app - tutorial */
 
-/* the following 6 methods is all we need */
+/* We need just these 5 methods to build large, scalable applications */
 import { create_app, create_volume, create_element, create_binding, dispatch } from './react-slim.js'
 import { JSDOM } from 'jsdom';
 
