@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "mustache": "^4.2.0",
+    "typescript": "^5.5.3",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
