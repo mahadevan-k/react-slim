@@ -94,6 +94,7 @@ export const dispatch = async (app,volume,action_data,...args) => {
 }
 
 export const create_element = (app,tag_name,template) => {
+  Mustache.parse(template)  
   class DynamicComponent extends app.window.HTMLElement {
     constructor() {
       super()
