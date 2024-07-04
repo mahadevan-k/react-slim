@@ -41,7 +41,7 @@ is included in the repository, you can see it here
 Here are some polarizing design choices I've made in the library. These are points you should
 seriously consider before adopting react-slim for large applications.
 
-State change propations are not automated, instead you have to declare the state properties that your components 
+State change propagations are not automated, instead you have to declare the state properties that your components 
 depend on, and the properties that your actions modify. This was intentionally done to make it easier to
 figure out component and action dependencies, however it does introduce the complexity of manually updating
 these props when you modify actions or components.
