@@ -53,8 +53,8 @@ React-slim makes a trade-off on centralized state management and shoots for modu
 centralized state management involves complexities in desiging the state for large applications.
 
 ChatGPT also pointed out that I don't use a virtual DOM for efficient updates to the UI, but on
-researching this topic, again, I found it unnecessary since react-slim only updates components whose state
-has changed, unlike React which re-renders the entire DOM tree on every state update.
+researching this topic, again, I found it unnecessary since react-slim only evaluates components whose state
+has changed, unlike React which evaluates the entire DOM tree on every state update.
 
 # How this library will evolve
 
