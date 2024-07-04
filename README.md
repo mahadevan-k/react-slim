@@ -29,12 +29,12 @@ wonder why such a complex implementation was needed for such a simple design pat
 
 The following diagram describes how react-slim is organized
 
-![React-slim architecture](react-slim-architecture.jpg "Architecture Diagram")
+![React-slim architecture](https://github.com/mahadevan-k/react-slim/blob/main/react-slim-architecture.jpg "Architecture Diagram")
 
 An example usage of react-slim to create a simple app that demonstrates how to use react-slim
 is included in the repository, you can see it here
 
-![Example application](app.js "Example Application")
+![Example application](https://github.com/mahadevan-k/react-slim/blob/main/app.js "Example Application")
 
 # Opinionated/polarizing design choices
 
