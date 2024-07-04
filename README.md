@@ -1,4 +1,4 @@
-# React-tiny
+# React-slim
 
 Super small react-redux implementation (~127 lines)
 
@@ -24,12 +24,16 @@ wonder why such a complex implementation was needed for such a simple design pat
 - Bells and whistles - only one way to work with the library => no confusions
 - developer "protection" - no parameter checking or safety checks => fast, tiny codebase
 
-# Learning react-tiny
+# Understanding react-slim
 
-To learn how to use the react-tiny library, read the app.js file in this repository,
-which contains detailed documentation in comments, which can be run in the command-line itself via
+The following diagram describes how react-slim is organized
 
-    npx node app.js
+![React-slim architecture](react-slim-architecture.jpg "Architecture Diagram")
+
+An example usage of react-slim to create a simple app that demonstrates how to use react-slim
+is included in the repository, you can see it here
+
+![Example application](app.js "Example Application")
 
 # How this library will evolve
 

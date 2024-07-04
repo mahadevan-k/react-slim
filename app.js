@@ -1,4 +1,4 @@
-/* react-tiny example app - tutorial */
+/* react-slim example app - tutorial */
 
 /* the following 6 methods is all we need */
 import { create_app, create_volume, create_element, create_binding, dispatch } from './react-slim.js'
@@ -10,19 +10,11 @@ const { window } = dom
 
 /* 
  * First, we create an app
- *
- * An app is the top-level object in the react-tiny system, all functionality works within the context of an app
- *
- * You can have as many apps as you want in your project to keep your code modular
- *
- * I plan to use the app object to break huge applications up into sets of single-page applications
  */
 const app = create_app(window)
 
 /*
  * Then we create a state, which should always be an object
- *
- * Here we create a simple state that contains two numbers,
  */ 
 const state = {
     n1: 1,
@@ -30,14 +22,7 @@ const state = {
 }
 
 /*
- * Then, we crate a volume.
- *
- * A volume connects components to a state and handles re-rendering components on state changes
- *
- * You can create as many volumes as you want, but remember that state-changes and re-rendering only work
- * within a volume and not across volumes
- *
- * A paginated todo-list with all its CRUD operations is a good example I can think of, for a single volume 
+ * Then, we create a volume and attach it to the state
  */
 const volume = create_volume(app,state)
 
@@ -103,10 +88,6 @@ const add_to_n1 = {
  *
  * The props argument determines which property updates trigger a re-render.
  * This is again manual but avoids unexpected results from automation
- *
- * So what's a binding then? Its a component associated with a bunch of things,
- * which helps the library do what it does, like creating and removing components during renders
- * and rendering components when the state changes
  */
 
 
@@ -122,17 +103,12 @@ const n2comp = {
 /*
  * And our second component, which is turned into a binding on-the-fly
  *
- * One thing to note about this component is that it creates a sub-component. When we do this, its important to give
- * a unique slot name to the sub-component, so that we don't create duplicate sub-components on re-renders. The slot 
- * name only needs to be unique among the sub-components in the render function, so don't worry about the slot name 
- * being globally unique.
- *
  * To bind our component, we provide
  *
  * 1. The volume to add the component to
  * 2. The component 
  * 3. The data function that resolves the data to be passed to the component template
- * 4. the slot name we spoke about, only important for the sub-component
+ * 4. the unique slot name for the component among its siblings
  * 5. component props - not to be confused with state props, just a set of arguments for the component to 
  * render, not connected to the state and does not trigger re-renders
  * 6. the parent binding, which is always the binding associated with our component, sent as a
@@ -173,17 +149,17 @@ console.log(dom.serialize())
  */
 
 console.log("INCREMENT N1")
-dispatch(app, volume, increment_n1)
+await dispatch(app, volume, increment_n1)
 console.log(dom.serialize())
 console.log("INCREMENT N1")
-dispatch(app, volume, increment_n1)
+await dispatch(app, volume, increment_n1)
 console.log("INCREMENT N1")
-dispatch(app, volume, increment_n1)
+await dispatch(app, volume, increment_n1)
 console.log("INCREMENT N2")
-dispatch(app, volume, increment_n2)
+await dispatch(app, volume, increment_n2)
 console.log(dom.serialize())
 console.log("ADD TO N1")
-dispatch(app, volume, add_to_n1,5)
+await dispatch(app, volume, add_to_n1,5)
 console.log(volume)
 
 /*
