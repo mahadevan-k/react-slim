@@ -64,6 +64,18 @@ to build apps or features.
 
 I am, however, open to performance improvements and bug-fixes
 
+# Using ChatGPT to generate react-slim apps
+
+The cool thing about react-slim is that 127 lines of code can easily be sent to ChatGPT in a prompt 
+to create react-slim modules and app.
+
+You can use the text of the following file as a prompt to chatgpt. The instructions to ChatGPT 
+are at the end of the file.
+
+![ChatGPT Prompt](https://github.com/mahadevan-k/react-slim/blob/main/app.js "ChatGPT Prompt")
+
+MAke sure you verify what you get from ChatGPT :))
+
 # Author
 
 Mahadevan K - mahadevan.k@gmail.com
