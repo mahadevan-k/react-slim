@@ -1,6 +1,6 @@
 {
   "name": "react-slim",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "An attempt to make a minimal react/redux library",
   "main": "react-slim.js",
   "type": "module",

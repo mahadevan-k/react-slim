@@ -72,7 +72,7 @@ to create react-slim modules and app.
 You can use the text of the following file as a prompt to chatgpt. The instructions to ChatGPT 
 are at the end of the file.
 
-![ChatGPT Prompt](https://github.com/mahadevan-k/react-slim/blob/main/app.js "ChatGPT Prompt")
+![ChatGPT Prompt](https://github.com/mahadevan-k/react-slim/blob/main/chatgpt-prompt.txt "ChatGPT Prompt")
 
 MAke sure you verify what you get from ChatGPT :))
 
