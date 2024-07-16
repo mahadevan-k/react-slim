@@ -6,6 +6,16 @@ export const create_app = (window) => ({window,volumes: []})
 export const get_app_element = (app,volume,binding) => 
     app.window.document.querySelector(`[volume_uuid="${volume.uuid}"][binding_uuid="${binding.uuid}"]`)
 
+const get_element_attrs = (element) => {
+      const attrs = {}
+      Array.from(element.attributes).forEach(({name,value}) => {
+        if(name!="binding_uuid" && name!="volume_uuid")
+          attrs[name]=value
+      })
+      return attrs
+}
+
+
 export const create_volume = (app,state) => {
     const uuid = uuidv4()
     app.volumes[uuid] = { uuid,bindings: {},state: state,deps: {} }
@@ -18,7 +28,8 @@ const get_binding = (volume,uuid) => volume.bindings[uuid]
 
 export const render_binding = (app,volume,binding) => {
    const element = get_app_element(app,volume,binding)
-   element._render(volume,binding)
+
+   element._render(volume,binding,get_element_attrs(element))
 }
 
 const create_volume_binding = (volume,slot,props,parent,element,data) => {
@@ -104,13 +115,12 @@ export const create_element = (app,tag_name,template) => {
     connectedCallback() {
       const volume = get_volume(app,this.getAttribute('volume_uuid'))
       const binding = get_binding(volume,this.getAttribute('binding_uuid'))
-
-      this._render(volume,binding)
+      this._render(volume,binding,get_element_attrs(this))
     }
 
-    _render(volume,binding) {
+    _render(volume,binding,attrs) {
       try {
-        const rendered = Mustache.render(template,binding.data(volume,binding))
+        const rendered = Mustache.render(template,{...binding.data(volume,binding),...attrs})
         this.innerHTML = rendered
       } catch (e) {
         console.error('Error rendering component:',e)
