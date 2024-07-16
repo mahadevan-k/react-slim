@@ -29,12 +29,12 @@ wonder why such a complex implementation was needed for such a simple design pat
 
 The following diagram describes how react-slim is organized
 
-![React-slim architecture](react-slim-architecture.jpg "Architecture Diagram")
+![React-slim architecture](https://github.com/mahadevan-k/react-slim/blob/main/react-slim-architecture.jpg "Architecture Diagram")
 
 An example usage of react-slim to create a simple app that demonstrates how to use react-slim
 is included in the repository, you can see it here
 
-![Example application](app.js "Example Application")
+![Example application](https://github.com/mahadevan-k/react-slim/blob/main/app.js "Example Application")
 
 # Opinionated/polarizing design choices
 
@@ -63,6 +63,18 @@ many libraries that change too fast, leaving developers always confused about th
 to build apps or features.
 
 I am, however, open to performance improvements and bug-fixes
+
+# Using ChatGPT to generate react-slim apps
+
+The cool thing about react-slim is that 127 lines of code can easily be sent to ChatGPT in a prompt 
+to create react-slim modules and app.
+
+You can use the text of the following file as a prompt to chatgpt. The instructions to ChatGPT 
+are at the end of the file.
+
+![ChatGPT Prompt](https://github.com/mahadevan-k/react-slim/blob/main/chatgpt-prompt.txt "ChatGPT Prompt")
+
+MAke sure you verify what you get from ChatGPT :))
 
 # Author
 
