@@ -3,9 +3,18 @@ import assert from 'node:assert'
 import { create_app, create_volume, create_element, create_binding, dispatch } from './react-slim.js'
 import { JSDOM } from 'jsdom'
 
-
-test("reactive state change propagation",async () => {
-    const dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>');
+await test("happy flow and sanity", async () => {
+    /*
+     * Tests the basic flow of the library
+     *
+     * - check that data is being fetched when component is created
+     * - check that HTML rendered contains correct value from state
+     * - check that action triggers component re-render
+     * - check that action parameters are passed to the action method
+     * - check that element attributes are propagated to the element rendering
+     * - check that all calls are happening with correct arguments and results
+     */
+    const dom = new JSDOM('<!doctype html><html><head></head><body></body></html>');
     const { window } = dom
 
     const app = create_app(window)
@@ -16,15 +25,15 @@ test("reactive state change propagation",async () => {
         props: ['a']
     }
     const component = {
-        template: create_element(app,'a-test',"<p>{{greeting}} {{a}}</p>"), 
+        element: create_element(app,'a-test',"<p>{{greeting}} {{a}}</p>"), 
         data: mock.fn((volume,binding) => ({ a:volume.state.a })),
         props: ['a']
     }
-    const binding = create_binding(volume,component,'',[])
+    const binding = create_binding(volume,component)
     window.document.body.innerHTML=`<a-test volume_uuid="${volume.uuid}" binding_uuid="${binding.uuid}" greeting="a is"/>`
-    assert.strictEqual(binding.data.mock.calls.length,1)
     const dom_element = app.window.document.querySelector(`[volume_uuid="${volume.uuid}"][binding_uuid="${binding.uuid}"]`)
     assert.strictEqual(dom_element.innerHTML,"<p>a is 1</p>");
+    assert.strictEqual(component.data.mock.calls.length,1)
     await dispatch(app,volume,increase_a,5)
     assert.strictEqual(dom_element.innerHTML,"<p>a is 6</p>");
     assert.strictEqual(increase_a.action.mock.calls.length,1)
@@ -37,58 +46,146 @@ test("reactive state change propagation",async () => {
     mock.reset()
 })
 
-/*
-const app = create_app(window)
-const state = {
-    n1: 1,
-    n2: 2
-}
-const volume = create_volume(app,state)
-const increment_n1 = {
-    action: async (state) => {
-        state.n1=state.n1+1;
-    },
-    props: ['n1']
-}
-const increment_n2 = {
-    action: async (state) => {
-        state.n2=state.n2+1;
-    },
-    props: ['n2']
-}
-const add_to_n1 = {
-    action: async (state,value) => {
-        state.n1=state.n1+value;
-    },
-    props: ['n1']
-}
-const n2comp = {
-    element: create_element(app,'n2-comp','<h2>N2 is {{n2}}</h2>'),
-    data: (volume,binding) => ({ n2: volume.state.n2 }),
-    props: ['n2']
-}
-const n1compb = create_binding(volume,{
-    element: create_element(app,'n1-comp',
-        '<n2-comp volume_uuid="{{n2comp.volume_uuid}}" binding_uuid="{{n2comp.binding_uuid}}"></n2-comp><h1>N1 is {{n1}}</h1>'),
-    data: (volume,binding) => {
-        const n2compb = create_binding(volume,n2comp,'n2comp',{},binding)
-        return { n2comp: {volume_uuid: volume.uuid, binding_uuid: n2compb.uuid}, n1: volume.state.n1 }
-    },
-    props: ['n1']
-},'n1comp1',{},undefined);
-window.document.body.innerHTML=`<n1-comp volume_uuid="${volume.uuid}" binding_uuid="${n1compb.uuid}"/>`
-console.log(dom.serialize())
-console.log("INCREMENT N1")
-await dispatch(app, volume, increment_n1)
-console.log(dom.serialize())
-console.log("INCREMENT N1")
-await dispatch(app, volume, increment_n1)
-console.log("INCREMENT N1")
-await dispatch(app, volume, increment_n1)
-console.log("INCREMENT N2")
-await dispatch(app, volume, increment_n2)
-console.log(dom.serialize())
-console.log("ADD TO N1")
-await dispatch(app, volume, add_to_n1,5)
-console.log(volume)
-*/
+
+await test("hierarchial component re-renders", async () => {
+    // Check that if a component higher in heirarchy is being re-rendered, the descendents are not re-rendered again
+    const dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>');
+    const { window } = dom
+
+    const app = create_app(window)
+    const state = {a: 1, b: 2}
+    const volume = create_volume(app,state)
+    let bbottom = undefined
+    const increase_a = {
+        action: mock.fn(async (state,amount) => { state.a = state.a + amount}),
+        props: ['a']
+    }
+    const cbottom = {
+        element: create_element(app,'c-bottom',"<p>{{greeting}} {{a}}</p>"), 
+        data: mock.fn((volume,binding) => ({ a:volume.state.a })),
+        props: ['a']
+    }
+    const cmiddle = {
+        element: create_element(app,'c-middle','<c-bottom volume_uuid="{{bbottom.volume}}" binding_uuid="{{bbottom.binding}}" greeting="a is"></c-bottom>'), 
+        data: mock.fn((volume,binding) => { 
+            bbottom = create_binding(volume,cbottom,'b-bottom',binding)
+            return { a:volume.state.a,bbottom: { volume: volume.uuid, binding: bbottom.uuid } }
+        }),
+        props: ['a']
+    }
+    const ctop = {
+        element: create_element(app,'c-top','<c-middle volume_uuid="{{bmiddle.volume}}" binding_uuid="{{bmiddle.binding}}"></c-middle>'), 
+        data: mock.fn((volume,binding) => { 
+            const bmiddle = create_binding(volume,cmiddle,'b-middle',binding)
+            return { a:volume.state.a,bmiddle: { volume: volume.uuid, binding: bmiddle.uuid } }
+        }),
+        props: ['a']
+    }
+    const btop = create_binding(volume,ctop)
+    window.document.body.innerHTML=`<c-top volume_uuid="${volume.uuid}" binding_uuid="${btop.uuid}"></c-top>`
+    assert.strictEqual(ctop.data.mock.calls.length,1)
+    assert.strictEqual(cmiddle.data.mock.calls.length,1)
+    assert.strictEqual(cbottom.data.mock.calls.length,1)
+    await dispatch(app,volume,increase_a,6)
+    assert.strictEqual(ctop.data.mock.calls.length,2)
+    assert.strictEqual(cmiddle.data.mock.calls.length,2)
+    assert.strictEqual(cbottom.data.mock.calls.length,2)
+})
+
+await test("hierarchial component re-renders", async () => {
+    // Check that if a component higher in heirarchy is being re-rendered, the descendents are not re-rendered again
+    const dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>');
+    const { window } = dom
+
+    const app = create_app(window)
+    const state = {a: 1, b: 2}
+    const volume = create_volume(app,state)
+    let bbottom = undefined
+    const increase_a = {
+        action: mock.fn(async (state,amount) => { state.a = state.a + amount}),
+        props: ['a']
+    }
+    const cbottom = {
+        element: create_element(app,'c-bottom',"<p>{{greeting}} {{a}}</p>"), 
+        data: mock.fn((volume,binding) => ({ a:volume.state.a })),
+        props: ['a']
+    }
+    const cmiddle = {
+        element: create_element(app,'c-middle','<c-bottom volume_uuid="{{bbottom.volume}}" binding_uuid="{{bbottom.binding}}" greeting="a is"></c-bottom>'), 
+        data: mock.fn((volume,binding) => { 
+            bbottom = create_binding(volume,cbottom,'b-bottom',binding)
+            return { a:volume.state.a,bbottom: { volume: volume.uuid, binding: bbottom.uuid } }
+        }),
+        props: ['a']
+    }
+    const ctop = {
+        element: create_element(app,'c-top','<c-middle volume_uuid="{{bmiddle.volume}}" binding_uuid="{{bmiddle.binding}}"></c-middle>'), 
+        data: mock.fn((volume,binding) => { 
+            const bmiddle = create_binding(volume,cmiddle,'b-middle',binding)
+            return { a:volume.state.a,bmiddle: { volume: volume.uuid, binding: bmiddle.uuid } }
+        }),
+        props: ['a']
+    }
+    const btop = create_binding(volume,ctop)
+    window.document.body.innerHTML=`<c-top volume_uuid="${volume.uuid}" binding_uuid="${btop.uuid}"></c-top>`
+    assert.strictEqual(ctop.data.mock.calls.length,1)
+    assert.strictEqual(cmiddle.data.mock.calls.length,1)
+    assert.strictEqual(cbottom.data.mock.calls.length,1)
+    await dispatch(app,volume,increase_a,6)
+    assert.strictEqual(ctop.data.mock.calls.length,2)
+    assert.strictEqual(cmiddle.data.mock.calls.length,2)
+    assert.strictEqual(cbottom.data.mock.calls.length,2)
+})
+
+await test("multiple property change re-rendering", async () => {
+    // check that on multiple property changes by an action, no unnecessary re-renders occur
+    const dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>');
+    const { window } = dom
+
+    const app = create_app(window)
+    const state = {a: 1, b: 2}
+    const volume = create_volume(app,state)
+    let bbottom = undefined
+    const increase_a = {
+        action: mock.fn(async (state,amount) => { state.a = state.a + amount}),
+        props: ['a']
+    }
+    const increase_a_and_b = {
+        action: mock.fn(async (state,amount) => { state.a = state.a + amount; state.b = state.b + amount ; }),
+        props: ['a','b']
+    }
+    const cbottom = {
+        element: create_element(app,'c-bottom',"<p>{{greeting}} {{a}}</p>"), 
+        data: mock.fn((volume,binding) => ({ a:volume.state.a })),
+        props: ['a']
+    }
+    const cmiddle = {
+        element: create_element(app,'c-middle','<c-bottom volume_uuid="{{bbottom.volume}}" binding_uuid="{{bbottom.binding}}" greeting="a is"></c-bottom><p>b is {{b}}'), 
+        data: mock.fn((volume,binding) => { 
+            bbottom = create_binding(volume,cbottom,'b-bottom',binding)
+            return { b:volume.state.b,bbottom: { volume: volume.uuid, binding: bbottom.uuid } }
+        }),
+        props: ['a','b']
+    }
+    const ctop = {
+        element: create_element(app,'c-top','<c-middle volume_uuid="{{bmiddle.volume}}" binding_uuid="{{bmiddle.binding}}"></c-middle>'), 
+        data: mock.fn((volume,binding) => { 
+            const bmiddle = create_binding(volume,cmiddle,'b-middle',binding)
+            return { a:volume.state.a,bmiddle: { volume: volume.uuid, binding: bmiddle.uuid } }
+        }),
+        props: ['a']
+    }
+    const btop = create_binding(volume,ctop)
+    window.document.body.innerHTML=`<c-top volume_uuid="${volume.uuid}" binding_uuid="${btop.uuid}"></c-top>`
+    assert.strictEqual(ctop.data.mock.calls.length,1)
+    assert.strictEqual(cmiddle.data.mock.calls.length,1)
+    assert.strictEqual(cbottom.data.mock.calls.length,1)
+    await dispatch(app,volume,increase_a,6)
+    assert.strictEqual(ctop.data.mock.calls.length,2)
+    assert.strictEqual(cmiddle.data.mock.calls.length,2)
+    assert.strictEqual(cbottom.data.mock.calls.length,2)
+    await dispatch(app,volume,increase_a_and_b,6)
+    assert.strictEqual(ctop.data.mock.calls.length,3)
+    assert.strictEqual(cmiddle.data.mock.calls.length,3)
+    assert.strictEqual(cbottom.data.mock.calls.length,3)
+})

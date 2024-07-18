@@ -126,11 +126,11 @@ const n1compb = create_binding(volume,{
     element: create_element(app,'n1-comp',
         '<n2-comp volume_uuid="{{n2comp.volume_uuid}}" binding_uuid="{{n2comp.binding_uuid}}"></n2-comp><h1>N1 is {{n1}}</h1>'),
     data: (volume,binding) => {
-        const n2compb = create_binding(volume,n2comp,'n2comp',{},binding)
+        const n2compb = create_binding(volume,n2comp,'n2comp',binding)
         return { n2comp: {volume_uuid: volume.uuid, binding_uuid: n2compb.uuid}, n1: volume.state.n1 }
     },
     props: ['n1']
-},'n1comp1',{},undefined);
+});
 
 
 /* 
