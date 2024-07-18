@@ -1,0 +1,10 @@
+1.0.9
+
+- fixed bug where slots were copied wrong from a previous binding on binding
+re-creation
+- fixed bug in computing volume deps which causes unnecessary rerenders
+
+1.0.8
+
+- sanity test added
+- re-order of parameters for comfort while coding

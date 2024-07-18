@@ -15,7 +15,6 @@ const get_element_attrs = (element) => {
       return attrs
 }
 
-
 export const create_volume = (app,state) => {
     const uuid = uuidv4()
     app.volumes[uuid] = { uuid,bindings: {},state: state,deps: {} }
@@ -38,7 +37,7 @@ const create_volume_binding = (volume,slot,props,parent,element,data) => {
     if(parent) {
         if(slot in parent.slots) {
             uuid = parent.slots[slot]
-            slots = volume.bindings[uuid]
+            slots = volume.bindings[uuid].slots
         } else {
             parent.slots[slot]=uuid
         }
@@ -53,9 +52,8 @@ const get_ascendent = (volume,binding) => binding.parent ? volume.bindings[bindi
 const should_notify = (volume,prop,binding) => {
     if(prop in volume.deps) {
         let ascendent = get_ascendent(volume,binding)
-
         while(ascendent) {
-            if(ascendent.uuid in volume.deps[prop])
+            if(volume.deps[prop].has(ascendent.uuid)) 
                 return false
             ascendent = get_ascendent(volume,ascendent)
         }
@@ -64,8 +62,8 @@ const should_notify = (volume,prop,binding) => {
     return true
 }
 
-const add_dep = (volume,prop,binding) => volume.deps[prop] ? 
-    volume.deps[prop].add(binding.uuid) : volume.deps[prop]=new Set([binding.uuid])
+const add_dep = (volume,prop,binding) => prop in volume.deps ?
+        volume.deps[prop].add(binding.uuid) : volume.deps[prop]=new Set([binding.uuid])
 
 const resolve_dep = (volume,prop,binding) => { 
     if(should_notify(volume,prop,binding))
@@ -88,7 +86,7 @@ const render_deps = (app,volume,props) => {
     })
 }
 
-export const create_binding = (volume,component_data,slot,props,parent) => {
+export const create_binding = (volume,component_data,slot,parent,props) => {
     const { element,data,props: dep_props } = component_data
 
     const binding = create_volume_binding(volume,slot,props,parent,element,data)
@@ -109,7 +107,6 @@ export const create_element = (app,tag_name,template) => {
   class DynamicComponent extends app.window.HTMLElement {
     constructor() {
       super()
-
     }
 
     connectedCallback() {
@@ -130,4 +127,5 @@ export const create_element = (app,tag_name,template) => {
   }
 
   app.window.customElements.define(tag_name,DynamicComponent)
+  return tag_name
 }
