@@ -3,6 +3,8 @@
 - fixed bug where slots were copied wrong from a previous binding on binding
 re-creation
 - fixed bug in computing volume deps which causes unnecessary rerenders
+- fixed bug in computing render deps when multiple properties were affected by
+an action
 
 1.0.8
 
