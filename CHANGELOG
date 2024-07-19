@@ -1,3 +1,7 @@
+1.1.0
+
+- support for chaining multiple actions within a volume to reduce unnecessary re-renders
+
 1.0.9
 
 - fixed bug where slots were copied wrong from a previous binding on binding

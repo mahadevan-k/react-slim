@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 export const create_app = (window) => ({window,volumes: []})
 
-export const get_app_element = (app,volume,binding) => 
+const get_app_element = (app,volume,binding) => 
     app.window.document.querySelector(`[volume_uuid="${volume.uuid}"][binding_uuid="${binding.uuid}"]`)
 
 const get_element_attrs = (element) => {
@@ -25,7 +25,7 @@ const get_volume = (app,uuid) => app.volumes[uuid]
 
 const get_binding = (volume,uuid) => volume.bindings[uuid]
 
-export const render_binding = (app,volume,binding) => {
+const render_binding = (app,volume,binding) => {
    const element = get_app_element(app,volume,binding)
 
    element._render(volume,binding,get_element_attrs(element))
@@ -106,10 +106,20 @@ export const create_binding = (volume,component_data,slot,parent,props) => {
     return binding
 }
 
-export const dispatch = async (app,volume,action_data,...args) => {
+const caller = (fn,...args) => async (volume) => await fn(volume.state,...args)
+
+export const action = (action_data,...args) => {
     const { action,props } = action_data
-    await action(volume.state,...args)
-    render_deps(app,volume,props)
+    return { call: caller(action,...args), props }
+}
+
+export const dispatch = async (app,volume,...actions) => {
+    const render_props = new Set([])
+    actions.forEach((action) => {
+        action.call(volume)
+        action.props.forEach((prop) => render_props.add(prop))
+    })
+    render_deps(app,volume,render_props)
 }
 
 export const create_element = (app,tag_name,template) => {

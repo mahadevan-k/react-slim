@@ -1,7 +1,7 @@
 /* react-slim example app - tutorial */
 
 /* We need just these 5 methods to build large, scalable applications */
-import { create_app, create_volume, create_element, create_binding, dispatch } from './react-slim.js'
+import { create_app, create_volume, create_element, create_binding, dispatch,action } from './react-slim.js'
 import { JSDOM } from 'jsdom';
 
 /* ONLY FOR DEMO: setup JSDOM with dom for testing without browser (not required in a real app) */
@@ -148,18 +148,16 @@ console.log(dom.serialize())
  * modified by the actions
  */
 
+// increment n1 and print dom
 console.log("INCREMENT N1")
-await dispatch(app, volume, increment_n1)
+await dispatch(app,volume,action(increment_n1))
 console.log(dom.serialize())
-console.log("INCREMENT N1")
-await dispatch(app, volume, increment_n1)
-console.log("INCREMENT N1")
-await dispatch(app, volume, increment_n1)
-console.log("INCREMENT N2")
-await dispatch(app, volume, increment_n2)
+// chain some increments
+console.log("CHAIN INCREMENT N1 3 times")
+await dispatch(app,volume,action(increment_n1),action(increment_n1),action(increment_n1))
 console.log(dom.serialize())
 console.log("ADD TO N1")
-await dispatch(app, volume, add_to_n1,5)
+await dispatch(app,volume,action(add_to_n1,5))
 console.log(volume)
 
 /*

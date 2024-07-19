@@ -1,6 +1,6 @@
 # React-slim
 
-Super small react-redux implementation (~127 lines)
+Super small react-redux implementation (~150 lines)
 
 I like to think of it as the unshitification of react :)
 
@@ -13,7 +13,9 @@ wonder why such a complex implementation was needed for such a simple design pat
 - Simple, understandable code that provides all of the core advantages of using the react design pattern
   - Component updation on declared state changes
   - Action dispatches which trigger state changes, which in turn trigger component updates
+- HTML tag names that correspond to your components, making the structure easy to read and debug
 - Component heirarchies that update efficiently without duplication and unnecessary re-renders
+- action chaining to reduce re-renders and control the order of async actions when needed
 - State need not be immutable
 - Modular structure that allows you to break up your app into multiple sub-apps
 - Flexible, de-coupled implementation that allows you to combine things the way you want to
@@ -66,7 +68,7 @@ I am, however, open to performance improvements and bug-fixes
 
 # Using ChatGPT to generate react-slim apps
 
-The cool thing about react-slim is that 127 lines of code can easily be sent to ChatGPT in a prompt 
+The cool thing about react-slim is that 150 lines of code can easily be sent to ChatGPT in a prompt 
 to create react-slim modules and app.
 
 You can use the text of the following file as a prompt to chatgpt. The instructions to ChatGPT 
@@ -74,7 +76,8 @@ are at the end of the file.
 
 ![ChatGPT Prompt](https://github.com/mahadevan-k/react-slim/blob/main/chatgpt-prompt.txt "ChatGPT Prompt")
 
-MAke sure you verify what you get from ChatGPT :))
+Far from perfect though, so make sure you match the coding convensions followed in the example application above 
+and edit ChatGPT's output for best results.
 
 # Author
 
