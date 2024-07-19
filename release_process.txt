@@ -1,6 +1,7 @@
 Release process
 
 - update CHANGELOG with all changes
+- update README.md with relevant info
 - go through example application and README and make necessary changes
 - Bump up version in package.json
 - copy and paste the react-slim.js code into chatgpt_prompt.txt
