@@ -8,6 +8,7 @@ The main motivation to write this library was the shock and horror I felt when I
 the react library actually has a compiler and rust code that compiles to WASM etc. making me
 wonder why such a complex implementation was needed for such a simple design pattern.
 
+
 # What you get with this library
 
 - Simple, understandable code that provides all of the core advantages of using the react design pattern
@@ -26,6 +27,23 @@ wonder why such a complex implementation was needed for such a simple design pat
 - Magic - no hidden functionality, no side-effects => no surprises or unpredictable behavior
 - Bells and whistles - only one way to work with the library => no confusions
 - developer "protection" - no parameter checking or safety checks => fast, tiny codebase
+
+# installing react-slim
+
+You can either install react-slim via npm and gang in your web application using
+
+```
+npm install react-slim
+```
+
+or
+
+you can include it directly in your browser by including it along with the mustache library
+
+```
+ <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/react-slim@latest/dist/react-slim.min.js"></script>
+```
 
 # Understanding react-slim
 

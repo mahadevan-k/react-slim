@@ -18,5 +18,7 @@ module.exports = {
        amd: 'lodash',
        root: '_',
      },
+     uuid: 'uuid',
+     mustache: 'mustache'
    }
 };

@@ -1,3 +1,11 @@
+1.1.2
+
+- further improvements to bundling using babel, browserify and esmify
+
+1.1.1
+
+- improved bundling
+
 1.1.0
 
 - support for chaining multiple actions within a volume to reduce unnecessary re-renders

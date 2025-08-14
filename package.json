@@ -1,25 +1,28 @@
 {
   "name": "react-slim",
-  "version": "1.1.0",
+  "version": "1.1.3",
   "description": "An attempt to make a minimal react/redux library",
-  "main": "react-slim.js",
+  "main": "dist/react-slim.min.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "browserify react-slim.js -p [ esmify ] -t [ babelify --presets [ @babel/preset-env ] ] --external mustache -o dist/react-slim.min.js"
   },
   "module": "react-slim.js",
   "author": "Mahadevan K",
   "license": "MIT",
   "dependencies": {
-    "mustache": "^4.2.0",
-    "uuid": "^10.0.0"
+    "mustache": "^4.2.0"
   },
   "devDependencies": {
-    "browserify": "^17.0.0",
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.1",
     "esmify": "^2.1.1",
     "jsdom": "^24.1.0",
     "lodash": "^4.17.21",
+    "minify": "^14.0.0",
     "webpack": "^5.92.1",
     "webpack-cli": "^5.1.4"
   }
