@@ -42,7 +42,9 @@ you can include it directly in your browser by including it along with the musta
 
 ```
  <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/react-slim@latest/dist/react-slim.min.js"></script>
+ <script type=module">
+    import { create_app, create_volume, create_element, create_binding, dispatch, action } from "https://cdn.jsdelivr.net/npm/react-slim@latest/dist/react-slim.min.js">
+ </script>
 ```
 
 # Understanding react-slim

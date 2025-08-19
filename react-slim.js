@@ -1,4 +1,14 @@
-import Mustache from 'mustache'
+let Mustache;
+
+if (typeof window === 'undefined') {
+  // Node environment
+  Mustache = await import(/* webpackIgnore: true */'mustache');
+  // If you want just the default export:
+  Mustache = Mustache.default || Mustache;
+} else {
+  // Browser environment, expect global Mustache from CDN
+  Mustache = window.Mustache;
+}
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
