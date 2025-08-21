@@ -61,15 +61,19 @@ The actual implementation requires you to learn and use only 6 methods.
 
 Concepts that deal with UI and rendering
 
-Apps - coordinate mapping and rendering to the UI, and help segregate functionality of large applications
-Elements - Register a custom HTML element which render a HTML mustache template
+Apps
+: coordinate mapping and rendering to the UI, and help segregate functionality of large applications
+Elements
+: Register a custom HTML element which render a HTML mustache template
 
 ### Propagation concepts
 
 Concepts that coordinate updates to the UI based on changes to states
 
-Volumes - handle all UI updates associated with a State object 
-Bindings - handle UI updates for a single Component
+Volumes
+: handle all UI updates associated with a State object 
+Bindings
+: handle UI updates for a single Component
 
 ### Declarative concepts
 
