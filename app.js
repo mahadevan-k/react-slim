@@ -1,34 +1,14 @@
-/* react-slim example app - tutorial */
-
-/*
- * # React-slim is broken up into three types of concepts
+/* React-slim example app
  *
- * ## Visual concepts - concepts that deal with UI and rendering
+ * This file demonstrates how react-slim can be used to create applications.
  *
- * Apps - coordinate mapping and rendering to the UI, and help segregate functionality of large applications
- * Element - Registers a custom HTML element which renders a HTML mustache template
- *
- * ## Dynamic concepts - concepts the coordinate updates to the UI based on changes to states
- *
- * Volumes - handle all UI updates associated with a State object 
- * Bindings - handle UI updates for a single Component
- *
- * ## Declarative concepts
- *
- * States - javascript objects that simply store data you need for your application, top-level keys of the object can be used to subscribe/trigger changes to the UI
- * Components - javascript objects that map Elements to data and declare the State keys they subscribe to
- * Actions - javascript objects that define a function that modifies state as well as declare the State keys that it modifies
- *
- *
- * # How the react-slim event loop works
- *
- * 1. An Actions modifes a State
- * 2. The Volume managing the State triggers re-renders for all Bindings which subscribe to the state keys that the Action modifies
- * 3. Each Binding triggers a render of the Element associated with its Component
- * 4. The Element renders using data from the Component
+ * This is a simple app that simply tracks two counters, modifies them and updates the UI
  */
 
-/* We need just these 6 methods to build large, scalable applications */
+
+/* 
+ * We need just these 6 methods to build large, scalable applications
+ */
 import { create_app, create_volume, create_element, create_binding, dispatch, action } from './dist/react-slim.js';
 
 /* 
@@ -48,7 +28,7 @@ const { window } = dom
 const app = create_app(window)
 
 /*
- * Then we create a state, which should always be an object
+ * Next, we create a state, which should always be an object
  *
  * The state works exactly like a react-state, only top-level objects of the state can be used for propagating changes to components
  */ 
@@ -139,7 +119,7 @@ const n2comp = {
 }
 
 /*
- * And our second component, which is turned into a binding on-the-fly
+ * And our second component, which is turned into a binding on-the-fly, and demonstrates binding heirarchy
  *
  * Bindings 
  *
@@ -147,10 +127,14 @@ const n2comp = {
  *
  * 1. The volume to add the component to
  * 2. The component 
+ * 
+ * But if we create a binding inside another binding, we'll need a unique slot name and the parent binding as well
+ *
+ * This is shown in the `n2compb` initialization inside the data function
  *
  * Note that the data function can return functions as well which can be used to attach event handlers etc.
  *
- * Also note that when using a component tag, you need to pass the volume_uuid and binding_uuid as props to the tag,
+ * Also note that when using a child component tag, you need to pass the volume_uuid and binding_uuid as props to the tag,
  * this can be obtained in the data function by creating the binding and then using it's uuid as shown below
  *
  * When reading this code, compare it to the simple component above to understand what is going on
