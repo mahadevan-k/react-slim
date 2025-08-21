@@ -111,7 +111,7 @@ An additional goal is to allow for action definitions that modify state but do n
 
 This also means that states do not have to be immutable.
 
-# Concept Re-usability
+## Concept Re-usability
 
 React-slim tries to keep its concepts as re-usable as possible.
 
@@ -122,6 +122,8 @@ React-slim tries to keep its concepts as re-usable as possible.
 However, there is an exception
 
 - Elements are probably the least re-usable since they are bound to the app, and they need a globally unique element name since they are registered as custom HTML elements
+
+## Concept diagram
 
 The following diagram describes how react-slim is organized
 
