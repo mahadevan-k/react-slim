@@ -14,6 +14,7 @@ wonder why such a complex implementation was needed for such a simple design pat
 - Simple, understandable code that provides all of the core advantages of using the react design pattern
   - Component updation on declared state changes
   - Action dispatches which trigger state changes, which in turn trigger component updates
+- Powerful template-based rendering thanks to ![Mustache](https://github.com/janl/mustache.js/)
 - HTML tag names that correspond to your components, making the structure easy to read and debug
 - Component heirarchies that update efficiently without duplication and unnecessary re-renders
 - action chaining to reduce re-renders and control the order of async actions when needed
@@ -115,7 +116,7 @@ This also means that states do not have to be immutable.
 React-slim tries to keep its concepts as re-usable as possible.
 
 - Actions are not bound to anything and can be re-used across apps, volumes and bindings
-- Components can be re-used across Bindings, and therefore across Volumes
+- Components can be re-used across Bindings, and therefore across Volumes and Apps
 - States can be re-used across Volumes (but make sure you dispatch actions appropriately for each volume that manages the state)
 
 However, there is an exception
