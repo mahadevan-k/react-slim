@@ -1,20 +1,56 @@
 /* react-slim example app - tutorial */
 
-/* We need just these 5 methods to build large, scalable applications */
-import { create_app, create_volume, create_element, create_binding, dispatch, action } from './dist/react-slim.js';
-import { JSDOM } from 'jsdom';
+/*
+ * # React-slim is broken up into three types of concepts
+ *
+ * ## Visual concepts - concepts that deal with UI and rendering
+ *
+ * Apps - coordinate mapping and rendering to the UI, and help segregate functionality of large applications
+ * Element - Registers a custom HTML element which renders a HTML mustache template
+ *
+ * ## Dynamic concepts - concepts the coordinate updates to the UI based on changes to states
+ *
+ * Volumes - handle all UI updates associated with a State object 
+ * Bindings - handle UI updates for a single Component
+ *
+ * ## Declarative concepts
+ *
+ * States - javascript objects that simply store data you need for your application, top-level keys of the object can be used to subscribe/trigger changes to the UI
+ * Components - javascript objects that map Elements to data and declare the State keys they subscribe to
+ * Actions - javascript objects that define a function that modifies state as well as declare the State keys that it modifies
+ *
+ *
+ * # How the react-slim event loop works
+ *
+ * 1. An Actions modifes a State
+ * 2. The Volume managing the State triggers re-renders for all Bindings which subscribe to the state keys that the Action modifies
+ * 3. Each Binding triggers a render of the Element associated with its Component
+ * 4. The Element renders using data from the Component
+ */
 
-/* ONLY FOR DEMO: setup JSDOM with dom for testing without browser (not required in a real app) */
-const dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>');
-const { window } = dom
+/* We need just these 6 methods to build large, scalable applications */
+import { create_app, create_volume, create_element, create_binding, dispatch, action } from './dist/react-slim.js';
 
 /* 
- * First, we create an app
+ * First, let's create an app
+ *
+ * Apps connect the visual interface to react-slim.
+ *
+ * In this case we assign a JSDOM window to the app to simulate a web browser
+ *
+ * In most cases you could just pass window as an argument to initialize an app
+ *
+ * You can create as many apps as you like, to modularize your application and js bundles
  */
+import { JSDOM } from 'jsdom';
+const dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>');
+const { window } = dom
 const app = create_app(window)
 
 /*
  * Then we create a state, which should always be an object
+ *
+ * The state works exactly like a react-state, only top-level objects of the state can be used for propagating changes to components
  */ 
 const state = {
     n1: 1,
@@ -23,6 +59,8 @@ const state = {
 
 /*
  * Then, we create a volume and attach it to the state
+ *
+ * Volumes bring an entire app together, but for now it simply associates an app with a state
  */
 const volume = create_volume(app,state)
 
@@ -80,7 +118,7 @@ const add_to_n1 = {
  * element - a html custom element created with the create_element function(explained below)
  * data - function that returns all data required for rendering the component template
  * state - the state associated with the component
- * props - the keys in the state that the component uses, i.e. the keys that
+ * props - the keys in the state that the component subscribes to, i.e. the keys that
  * should trigger a re-render of the component
  *
  * The create_element function, takes an app, a tag name for the element, 
@@ -103,16 +141,12 @@ const n2comp = {
 /*
  * And our second component, which is turned into a binding on-the-fly
  *
+ * Bindings 
+ *
  * To bind our component, we provide
  *
  * 1. The volume to add the component to
  * 2. The component 
- * 3. The data function that resolves the data to be passed to the component template
- * 4. the unique slot name for the component among its siblings
- * 5. component props - not to be confused with state props, just a set of arguments for the component to 
- * render, not connected to the state and does not trigger re-renders
- * 6. the parent binding, which is always the binding associated with our component, sent as a
- * parameter to the data function
  *
  * Note that the data function can return functions as well which can be used to attach event handlers etc.
  *

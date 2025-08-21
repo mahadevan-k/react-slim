@@ -49,6 +49,67 @@ you can include it directly in your browser by including it along with the musta
 
 # Understanding react-slim
 
+## Concepts
+
+React-slim is broken up into three types of concepts.
+
+These concepts are only needed for you to understand how react-slim works.
+
+The actual implementation requires you to learn and use only 6 methods.
+
+### Visual concepts
+
+Concepts that deal with UI and rendering
+
+Apps - coordinate mapping and rendering to the UI, and help segregate functionality of large applications
+Elements - Register a custom HTML element which render a HTML mustache template
+
+### Propagation concepts
+
+Concepts that coordinate updates to the UI based on changes to states
+
+Volumes - handle all UI updates associated with a State object 
+Bindings - handle UI updates for a single Component
+
+### Declarative concepts
+
+Concepts that simply declare methods or data
+
+States - javascript objects tha define the  data you need for your application. Top-level keys of the object can be used to subscribe/trigger changes to the UI
+Components - javascript objects that define Elements, the data they need to render and the state keys they subscribe to
+Actions - javascript objects that define functions that modify state and the declare the state keys that they modify
+
+## How the react-slim event loop works
+
+1. User interacts with a component
+2. The component dispatches an Action (or a chain of Actions)
+3. The Action modifes a State
+4. The Volume managing the State triggers re-renders for all Bindings which subscribe to the state keys that the Action modifies
+5. Each Binding triggers a render of the Element associated with its Component
+6. The Element renders itself using data from the Component
+
+## Declarative UI updates
+
+React-slim uses a declarative approach to UI updates. The state keys that you declare in the components and actions are what react-slim uses to decide which components to update in the UI.
+
+The main goal of keeping the structure this way is to help developers easily understand which parts of the state affect a component, instead of having to dig through code to understand changes.
+
+An additional goal is to allow for action definitions that modify state but do not need to trigger UI updates.
+
+This also means that states do not have to be immutable.
+
+# Concept Re-usability
+
+React-slim tries to keep its concepts as re-usable as possible.
+
+- Actions are not bound to anything and can be re-used across apps, volumes and bindings
+- Components can be re-used across Bindings, and therefore across Volumes
+- States can be re-used across Volumes (but make sure you dispatch actions appropriately for each volume that manages the state)
+
+However, there is an exception
+
+- Elements are probably the least re-usable since they are bound to the app, and they need a globally unique element name since they are registered as custom HTML elements
+
 The following diagram describes how react-slim is organized
 
 ![React-slim architecture](https://github.com/mahadevan-k/react-slim/blob/main/react-slim-architecture.jpg "Architecture Diagram")
