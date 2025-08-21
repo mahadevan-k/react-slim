@@ -63,6 +63,7 @@ Concepts that deal with UI and rendering
 
 **Apps**
 : coordinate mapping and rendering to the UI, and help segregate functionality of large applications
+
 **Elements**
 : Register a custom HTML element which render a HTML mustache template
 
@@ -72,6 +73,7 @@ Concepts that coordinate updates to the UI based on changes to states
 
 **Volumes**
 : handle all UI updates associated with a State object 
+
 **Bindings**
 : handle UI updates for a single Component
 
@@ -81,10 +83,13 @@ Concepts that simply declare methods or data
 
 **States**
 : javascript objects tha define the  data you need for your application. Top-level keys of the object can be used to subscribe/trigger changes to the UI
+
 **Components**
 : javascript objects that define Elements, the data they need to render and the state keys they subscribe to
+
 **Actions**
 : javascript objects that define functions that modify state and the declare the state keys that they modify
+
 
 ## How the react-slim event loop works
 
