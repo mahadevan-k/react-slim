@@ -66,7 +66,7 @@ Concepts that deal with UI and rendering
 : coordinate mapping and rendering to the UI, and help segregate functionality of large applications
 
 **Elements**
-: Register a custom HTML element which render a HTML ![mustache](https://github.com/janl/mustache.js/) template
+: Register custom HTML tags which render a ![mustache](https://github.com/janl/mustache.js/) template
 
 ### Propagation concepts
 

@@ -101,7 +101,7 @@ const add_to_n1 = {
  * props - the keys in the state that the component subscribes to, i.e. the keys that
  * should trigger a re-render of the component
  *
- * The create_element function, takes an app, a tag name for the element, 
+ * The create_element function, takes an app, a globally-unique tag name for the element, 
  * and a mustache template containing a html template which renders the component
  *
  * The props argument determines which property updates trigger a re-render.
@@ -128,7 +128,8 @@ const n2comp = {
  * 1. The volume to add the component to
  * 2. The component 
  * 
- * But if we create a binding inside another binding, we'll need a unique slot name and the parent binding as well
+ * But if we create a child binding inside a parent binding, 
+ * we'll need a unique(within the parent component) slot name and the parent binding as well
  *
  * This is shown in the `n2compb` initialization inside the data function
  *
