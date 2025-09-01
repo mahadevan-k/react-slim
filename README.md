@@ -51,7 +51,7 @@ you can include it directly in your browser by including it along with the ![Mus
 
 The diagram below gives a good overview of the various concepts in react-slim and how they interact with each other
 
-![React-slim architecture](https://github.com/mahadevan-k/react-slim/blob/main/react-slim-architecture.png "Architecture Diagram")
+![React-slim architecture](https://github.com/mahadevan-k/react-slim/blob/documentation/react-slim-architecture.png "Architecture Diagram")
 
 ## How the react-slim event loop works
 
