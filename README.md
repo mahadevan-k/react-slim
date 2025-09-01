@@ -85,11 +85,6 @@ However, there is an exception
 
 - Elements are probably the least re-usable since they are bound to the app, and they need a globally unique element name since they are registered as custom HTML elements
 
-## Concept diagram
-
-The following diagram describes how react-slim is organized
-
-
 # Example app
 
 An example usage of react-slim to create a simple app that demonstrates how to use react-slim
