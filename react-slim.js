@@ -1,5 +1,7 @@
 let Mustache;
 
+const __react_slim_apps = {};
+
 if (typeof window === 'undefined') {
   // Node environment
   Mustache = await import(/* webpackIgnore: true */'mustache');
@@ -10,23 +12,31 @@ if (typeof window === 'undefined') {
   Mustache = window.Mustache;
 }
 
-function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
+function uuidv4(length = 2) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let uuid = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    uuid += chars[randomIndex];
+  }
+  return uuid;
 }
 
-export const create_app = (window) => ({window,volumes: []})
+export const create_app = (window) => {
+  const uuid = uuidv4()
+  __react_slim_apps[uuid] = {uuid,window,volumes: []}
+  return __react_slim_apps[uuid]
+}
+
+const get_app = (uuid) => (__react_slim_apps[uuid])
 
 const get_app_element = (app,volume,binding) => 
-    app.window.document.querySelector(`[volume_uuid="${volume.uuid}"][binding_uuid="${binding.uuid}"]`)
+    app.window.document.querySelector(`[data-rsl="${app.uuid}${volume.uuid}${binding.uuid}"]`)
 
 const get_element_attrs = (element) => {
       const attrs = {}
       Array.from(element.attributes).forEach(({name,value}) => {
-        if(name!="binding_uuid" && name!="volume_uuid")
+        if(name!="data-rsl")
           attrs[name]=value
       })
       return attrs
@@ -42,24 +52,39 @@ const get_volume = (app,uuid) => app.volumes[uuid]
 
 const get_binding = (volume,uuid) => volume.bindings[uuid]
 
+const get_locator = (app,volume,binding) => (`${app.uuid}${volume.uuid}${binding.uuid}`)
+
+const resolve_locator = (rsl) => {
+  const app = get_app(rsl.substring(0,2))
+  const volume = get_volume(app,rsl.substring(2,4))
+  const binding = get_binding(volume,rsl.substring(4,6))
+  return {app,volume,binding}
+}
+
 const render_binding = (app,volume,binding) => {
+   const rsl = get_locator(app,volume,binding)
    const element = get_app_element(app,volume,binding)
+   if(element==null) ReferenceError(`Element for binding(rsl=${rsl}) not found, you might have missed specifying the 'data-rsl' attribute or your element may not have rendered due to some issues`)
 
    element._render(volume,binding,get_element_attrs(element))
 }
 
-const create_volume_binding = (volume,slot,props,parent,element,data) => {
+const create_volume_binding = (volume,slot,props,parent,element,data,behaviors,slot_guard) => {
     let uuid = uuidv4()
     let slots = {}
     if(parent) {
         if(slot in parent.slots) {
             uuid = parent.slots[slot]
-            slots = volume.bindings[uuid].slots
+            if(uuid in volume.bindings) {
+              if(volume.bindings[uuid].slot_guard==slot_guard)
+                throw new TypeError(`you seem to be mapping multiple bindings to the slot '${slot}'. Ensure that each slot within a binding are mapped to a unique binding.`);
+              slots = volume.bindings[uuid].slots
+            }
         } else {
             parent.slots[slot]=uuid
         }
     }
-    volume.bindings[uuid] = {props,parent,element,data,uuid,slots}
+    volume.bindings[uuid] = {props,parent,element,data,uuid,slots,behaviors,slot_guard}
     return volume.bindings[uuid]
 }
 
@@ -113,14 +138,16 @@ const render_deps = (app,volume,props) => {
     final_renders.forEach((binding_uuid) => { render_binding(app,volume,get_binding(volume,binding_uuid)) })
 }
 
-export const create_binding = (volume,component_data,slot,parent,props) => {
+export const create_binding = (app,volume,component_data,slot,parent,slot_guard,props) => {
     const { element,data,props: dep_props } = component_data
+    const behaviors = component_data["behaviors"]
+    if(slot && !slot_guard)
+      throw new ReferenceError("slot is present but slot_guard is not, ensure you receive it and pass it on in your data function")
 
-    const binding = create_volume_binding(volume,slot,props,parent,element,data)
-
+    const binding = create_volume_binding(volume,slot,props,parent,element,data,behaviors,slot_guard)
     resolve_deps(volume,dep_props,binding)
 
-    return binding
+    return get_locator(app,volume,binding)
 }
 
 const action_caller = (fn,...args) => async (volume) => await fn(volume.state,...args)
@@ -139,6 +166,25 @@ export const dispatch = async (app,volume,...actions) => {
     render_deps(app,volume,render_props)
 }
 
+export const execute_behavior = async (element,fn, ...args) => {
+  let currentNode=element
+  while(currentNode) {
+    const rsl = currentNode.getAttribute('data-rsl')
+    if(!rsl) {
+      currentNode = currentNode.parentNode
+    } else {
+      const { app,volume,binding } = resolve_locator(rsl)
+      const behaviors = binbinding.behaviors(volume,binding)
+      if(!(fn in behaviors))
+        throw new ReferenceError(`The behavior ${fn} is not present in binding(rsl='${rsl}')`);
+
+      [fn](...args)
+      return
+    }
+  }
+  throw new ReferenceError(`Couldn't execute behavior ${fn} because there was no element with the 'data-rsl' attribute in the element heirarchy`)
+}
+
 export const create_element = (app,tag_name,template) => {
   Mustache.parse(template)  
   class DynamicComponent extends app.window.HTMLElement {
@@ -147,15 +193,15 @@ export const create_element = (app,tag_name,template) => {
     }
 
     connectedCallback() {
-      const volume = get_volume(app,this.getAttribute('volume_uuid'))
-      const binding = get_binding(volume,this.getAttribute('binding_uuid'))
+      const rsl = this.getAttribute('data-rsl')
+      const {app,volume,binding} = resolve_locator(rsl)
       this._render(volume,binding,get_element_attrs(this))
     }
 
     _render(volume,binding,attrs) {
       try {
-        const rendered = Mustache.render(template,{...binding.data(volume,binding),...attrs})
-        this.innerHTML = rendered
+        this.innerHTML = Mustache.render(template,{...binding.data(volume,binding,uuidv4(6)),...attrs});
+
       } catch (e) {
         console.error('Error rendering component:',e)
         this.innerHTML = '<p>Error rendering component</p>'

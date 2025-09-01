@@ -1,6 +1,6 @@
 # React-slim
 
-Super small react-redux implementation (~150 lines)
+Super small react-redux implementation (~200 lines,4KB minified)
 
 I like to think of it as the unshitification of react :)
 
@@ -11,25 +11,22 @@ wonder why such a complex implementation was needed for such a simple design pat
 
 # What you get with this library
 
-- Simple, understandable code that provides all of the core advantages of using the react design pattern
-  - Component updation on declared state changes
-  - Action dispatches which trigger state changes, which in turn trigger component updates
+- All the power of react and reduc encapsulated into 7 simple functions
 - Powerful template-based rendering thanks to ![Mustache](https://github.com/janl/mustache.js/)
-- HTML tag names that correspond to your components, making the structure easy to read and debug
-- Component heirarchies that update efficiently without duplication and unnecessary re-renders
-- action chaining to reduce re-renders and control the order of async actions when needed
-- State need not be immutable
-- Modular structure that allows you to break up your app into multiple sub-apps
-- Flexible, de-coupled implementation that allows you to combine things the way you want to
+- Easy to debug - HTML tags to match your components, simple mapping via locators for tracing
+- Efficient,predictable re-renders
+- Modular structure - structure your application into multiple js bundles
+- De-coupled implementation that allows you to combine things the way you want to
 - Great performance
+- Use it directly in your browser, or via node - your choice.
 
 # What you don't get with this library
 
-- Magic - no hidden functionality, no side-effects => no surprises or unpredictable behavior
-- Bells and whistles - only one way to work with the library => no confusions
-- developer "protection" - no parameter checking or safety checks => fast, tiny codebase
+- No magic - no hidden functionality, no side-effects => no surprises or unpredictable behavior
+- No bells and whistles - only one way to work with the library => no confusions
+- No developer "protection" - no parameter checking or safety checks => fast, tiny codebase
 
-# installing react-slim
+# Installing react-slim
 
 You can either install react-slim via npm and gang in your web application using
 
@@ -39,7 +36,7 @@ npm install react-slim
 
 or
 
-you can include it directly in your browser by including it along with the mustache library
+you can include it directly in your browser by including it along with the ![Mustache](https://github.com/janl/mustache.js/) library
 
 ```
  <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
@@ -52,54 +49,19 @@ you can include it directly in your browser by including it along with the musta
 
 ## Concepts
 
-React-slim is broken up into three types of concepts.
+The diagram below gives a good overview of the various concepts in react-slim and how they interact with each other
 
-These concepts are only needed for you to understand how react-slim works.
-
-The actual implementation requires you to learn and use only 6 methods.
-
-### Visual concepts
-
-Concepts that deal with UI and rendering
-
-**Apps**
-: coordinate mapping and rendering to the UI, and help segregate functionality of large applications
-
-**Elements**
-: Register custom HTML tags which render a ![mustache](https://github.com/janl/mustache.js/) template
-
-### Propagation concepts
-
-Concepts that coordinate updates to the UI based on changes to states
-
-**Volumes**
-: handle all UI updates associated with a State object 
-
-**Bindings**
-: handle UI updates for a single Component
-
-### Declarative concepts
-
-Concepts that simply declare methods or data
-
-**States**
-: javascript objects tha define the  data you need for your application. Top-level keys of the object can be used to subscribe/trigger changes to the UI
-
-**Components**
-: javascript objects that define Elements, the data they need to render and the state keys they subscribe to
-
-**Actions**
-: javascript objects that define functions that modify state and the declare the state keys that they modify
-
+![React-slim architecture](https://github.com/mahadevan-k/react-slim/blob/main/react-slim-architecture.png "Architecture Diagram")
 
 ## How the react-slim event loop works
 
-1. User interacts with a component
-2. The component dispatches an Action (or a chain of Actions)
-3. The Action modifes a State
-4. The Volume managing the State triggers re-renders for all Bindings which subscribe to the state keys that the Action modifies
-5. Each Binding triggers a render of the Element associated with its Component
-6. The Element renders itself using data from the Component
+1. User interacts with a Element
+2. The Element triggers a Behavior
+4. The Behavior dispatches an Action
+5. The Action modifes a State
+4. The Volume managing the State triggers re-renders for Bindings that correspond to the State changes
+5. Each Binding triggers a re-render of the Element along with its Component at its Slot
+6. The Element renders itself using data(and State) from the Component into the Slot
 
 ## Declarative UI updates
 
@@ -127,7 +89,6 @@ However, there is an exception
 
 The following diagram describes how react-slim is organized
 
-![React-slim architecture](https://github.com/mahadevan-k/react-slim/blob/main/react-slim-architecture.jpg "Architecture Diagram")
 
 # Example app
 
