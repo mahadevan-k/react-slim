@@ -29,8 +29,6 @@ const dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>');
 const { window } = dom
 const app = create_app(window)
 
-console.log(app)
-
 /*
  * STATE
  *

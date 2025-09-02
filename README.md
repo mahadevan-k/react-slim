@@ -11,7 +11,7 @@ wonder why such a complex implementation was needed for such a simple design pat
 
 # What you get with this library
 
-- All the power of react and reduc encapsulated into 7 simple functions
+- All the power of react and redux encapsulated into 7 simple functions
 - Powerful template-based rendering thanks to ![Mustache](https://github.com/janl/mustache.js/)
 - Easy to debug - HTML tags to match your components, simple mapping via locators for tracing
 - Efficient,predictable re-renders
@@ -51,7 +51,7 @@ you can include it directly in your browser by including it along with the ![Mus
 
 The diagram below gives a good overview of the various concepts in react-slim and how they interact with each other
 
-![React-slim architecture](https://github.com/mahadevan-k/react-slim/blob/documentation/react-slim-architecture.png "Architecture Diagram")
+![React-slim architecture](https://github.com/mahadevan-k/react-slim/blob/main/react-slim-architecture.png "Architecture Diagram")
 
 ## How the react-slim event loop works
 
