@@ -174,11 +174,10 @@ export const execute_behavior = async (element,fn, ...args) => {
       currentNode = currentNode.parentNode
     } else {
       const { app,volume,binding } = resolve_locator(rsl)
-      const behaviors = binbinding.behaviors(volume,binding)
+      const behaviors = binding.behaviors(volume,binding)
       if(!(fn in behaviors))
         throw new ReferenceError(`The behavior ${fn} is not present in binding(rsl='${rsl}')`);
-
-      [fn](...args)
+      behaviors[fn](...args)
       return
     }
   }
